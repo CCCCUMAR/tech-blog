@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const {Post,Comment, User} = require('../models');
+const {Post, Comment, User} = require('../models');
 
 // (NTS) create function to view all posts, each individual post, and to add a comment on each single post
 
@@ -32,7 +32,7 @@ router.get('/', async (req, res) =>
             });
             const singlePost = post.get({plain: true });
             console.log(singlePost)
-            res.render ('singlePost', {singlePost, logged_in: req.sessin.logged_in, user_id: req.session.user_id});
+            res.render ('singlePost', {singlePost, logged_in: req.session.logged_in, user_id: req.session.user_id});
         } catch (err) {
             res.status(400).json(err);
         }
@@ -56,6 +56,24 @@ router.get('/', async (req, res) =>
         }
     }
     )
+
+    // login get route
+router.get('/login', (req, res) => {
+
+    // if a session currently exists then redirect the request to the homepage
+    if (req.session.logged_in) {
+        res.redirect('/');
+        return;
+    }
+
+    res.render('login');
+});
+
+// get route for signup
+router.get('/signup', (req, res) => {
+    res.render('signup')
+})
+
 
     module.exports = router;
 

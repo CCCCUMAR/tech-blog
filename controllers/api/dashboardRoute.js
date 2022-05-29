@@ -3,7 +3,7 @@ const session = require('express-session');
 const {User, Post} = require('../../models')
 
 // get route
-router.get('./:user_id', async (req, res) => 
+router.get('/:user_id', async (req, res) => 
 {
     try {
         const userData = await User.findByPk(req.params.user_id, {

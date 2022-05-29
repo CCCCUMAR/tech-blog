@@ -3,13 +3,10 @@ const {response} = require('express');
 const {user, User} = require('../../models');
 const { route } = require('./dashboardRoute');
 
-// get route ofr signup
-router.get('/signup', (req, res) => {
-    res.render('signup')
-})
+
 
 // post route for signup
-route.post('/signup', async (req, res) => 
+router.post('/signup', async (req, res) => 
 {
     try{
         const createUser = await User.create
@@ -18,22 +15,17 @@ route.post('/signup', async (req, res) =>
             email: req.body.email,
             password: req.body.password
         });
+        req.session.save(() => {
+            req.session.user_id = createUser.id;
+            console.log(req.session.user_id);
+            req.session.logged_in = true;
+            res.json(createUser);
+          });
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-// login get route
-router.get('/login', (req, res) => {
-
-    // if a session currently exists then redirect the request to the homepage
-    if (req.session.logged_in) {
-        res.redirect('/');
-        return;
-    }
-
-    res.render('/login');
-});
 
 router.post('/login', async (req, res) => 
 {
@@ -70,7 +62,7 @@ router.post('/login', async (req, res) =>
 });
 
 // get route to logout
-router.get('/logout', (req, res) => 
+router.post('/logout', (req, res) => 
 {
     if (req.session.logged_in) {
         req.session.destroy(() => //destroy current session
